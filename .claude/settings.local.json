@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node --input-type=module -e \"import {BubbleMenu} from '@tiptap/extension-bubble-menu'; console.log\\(typeof BubbleMenu, BubbleMenu?.name\\)\")",
+      "Bash(npx vue-tsc *)"
+    ]
+  }
+}
