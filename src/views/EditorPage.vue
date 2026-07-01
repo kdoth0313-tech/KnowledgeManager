@@ -96,7 +96,7 @@ function removeTag(tag: string) {
   tags.value = tags.value.filter((t) => t !== tag)
 }
 
-async function save(autoTitle = false) {
+async function save(autoTitle = false, navigateAfterSave = true) {
   const finalTitle = title.value.trim() || (autoTitle ? '未命名笔记' : '')
   if (!finalTitle && autoTitle) return
 
@@ -109,9 +109,12 @@ async function save(autoTitle = false) {
       [...tags.value],
       subject.value,
     )
-    router.replace({ name: 'editor', params: { id } })
+    // Only navigate when saving manually (not on unmount leave)
+    if (navigateAfterSave) {
+      router.replace({ name: 'editor', params: { id } })
+    }
   } else if (itemId.value) {
-    store.updateItem(itemId.value, {
+    await store.updateItem(itemId.value, {
       title: finalTitle,
       content: content.value,
       summary: summary.value.trim(),
@@ -137,9 +140,9 @@ watch([title, content, summary, keywords, tags, subject], () => {
 
 onBeforeUnmount(() => {
   if (autoSaveTimer) clearTimeout(autoSaveTimer)
-  // Save on leave
+  // Save on leave without navigating (user is intentionally leaving the editor)
   if (title.value.trim() || content.value.trim()) {
-    save(title.value.trim().length === 0)
+    save(title.value.trim().length === 0, false)
   }
 })
 
