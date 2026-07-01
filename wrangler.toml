@@ -1,0 +1,9 @@
+name = "knowledgemanager"
+
+[build]
+command = "npm run build"
+output_dir = "dist"
+
+[env.production]
+# Cloudflare Pages will inject these automatically
+# VITE_BASE defaults to "/" for Cloudflare Pages (no subpath needed)
