@@ -37,7 +37,7 @@ const { pause: pauseInterval, resume: resumeInterval } = useIntervalFn(
 )
 
 // Pause interval when collapsed to avoid unnecessary writes
-const { pause: pauseWatch, resume: resumeWatch } = watchDebounced(
+watchDebounced(
   expanded,
   (val) => {
     if (val) {
@@ -75,8 +75,8 @@ function confirmClear(): void {
   }
 }
 
-function promoteToNote(): void {
-  const id = draftStore.promoteToNote()
+async function promoteToNote(): Promise<void> {
+  const id = await draftStore.promoteToNote()
   if (id) {
     promotedNoteId.value = id
     setTimeout(() => {

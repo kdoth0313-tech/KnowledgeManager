@@ -42,9 +42,6 @@ watch(activeTag, (tag) => {
   }
 })
 
-// All tags from the store
-const allTags = computed(() => store.tagList)
-
 // Use advancedSearch for combined filtering
 const displayedItems = computed(() => {
   return store.advancedSearch({

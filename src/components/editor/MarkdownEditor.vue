@@ -61,7 +61,8 @@ watch(
   (ed) => {
     if (!ed || !toolbarEl.value) return
     // Reconfigure the bubble-menu extension with the actual element
-    ed.extensionStorage.bubbleMenu.options.element = toolbarEl.value
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(ed.extensionStorage as any).bubbleMenu.options.element = toolbarEl.value
   },
   { immediate: true },
 )
@@ -71,7 +72,7 @@ watch(
   () => props.modelValue,
   (newVal) => {
     if (editor.value && editor.value.getHTML() !== newVal) {
-      editor.value.commands.setContent(newVal, false)
+      editor.value.commands.setContent(newVal, { emitUpdate: false })
     }
   },
 )
@@ -183,8 +184,8 @@ onMounted(() => {
   if (!editor.value) return
   const el = editor.value.view.dom
   editorEl.value = el
-  el.addEventListener('paste', handleImagePaste as EventListener)
-  el.addEventListener('drop', handleImageDrop as EventListener)
+  el.addEventListener('paste', handleImagePaste as unknown as EventListener)
+  el.addEventListener('drop', handleImageDrop as unknown as EventListener)
   el.addEventListener('dragover', (e: DragEvent) => {
     if (e.dataTransfer?.types.includes('Files')) {
       e.preventDefault()
@@ -194,8 +195,8 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   if (!editorEl.value) return
-  editorEl.value.removeEventListener('paste', handleImagePaste as EventListener)
-  editorEl.value.removeEventListener('drop', handleImageDrop as EventListener)
+  editorEl.value.removeEventListener('paste', handleImagePaste as unknown as EventListener)
+  editorEl.value.removeEventListener('drop', handleImageDrop as unknown as EventListener)
 })
 </script>
 

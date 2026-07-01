@@ -49,11 +49,11 @@ function removeTag(tag: string): void {
   tags.value = tags.value.filter((t) => t !== tag)
 }
 
-function save(): void {
+async function save(): Promise<void> {
   if (!canSave.value) return
   isSaving.value = true
   const finalTitle = title.value.trim() || '未命名笔记'
-  const id = store.addItem(
+  const id = await store.addItem(
     finalTitle,
     content.value,
     summary.value.trim(),

@@ -41,7 +41,9 @@ export const useKnowledgeStore = defineStore('knowledge', () => {
     },
   })
 
-  // Rebuild FlexSearch index from items
+  // Pre-built FlexSearch index (populated during init)
+  // function rebuildIndex is kept for potential future use — manually re-index all items
+  /*
   function rebuildIndex(): void {
     // FlexSearch doesn't have a clear-all, so we recreate by removing all known
     items.value.forEach((item) => {
@@ -62,6 +64,7 @@ export const useKnowledgeStore = defineStore('knowledge', () => {
       })
     })
   }
+  */
 
   // Initialize — load from IndexedDB with migration
   const initPromise = (async () => {
@@ -305,7 +308,7 @@ export const useKnowledgeStore = defineStore('knowledge', () => {
         if (!doc || seen.has(doc.id)) continue
         seen.add(doc.id)
         // Use the match's own score (FlexSearch per-document score)
-        const score = typeof match.score === 'number' ? match.score : 0
+        const score = typeof (match as unknown as { score?: number }).score === 'number' ? (match as unknown as { score: number }).score : 0
         merged.push({
           id: doc.id,
           title: doc.title,
@@ -350,12 +353,14 @@ export const useKnowledgeStore = defineStore('knowledge', () => {
 
     // Filter by tag
     if (opts.tag) {
-      results = results.filter((item) => item.tags.includes(opts.tag))
+      const tagFilter = opts.tag
+      results = results.filter((item) => item.tags.includes(tagFilter))
     }
 
     // Filter by subject
     if (opts.subject) {
-      results = results.filter((item) => item.subject === opts.subject)
+      const subjectFilter = opts.subject
+      results = results.filter((item) => item.subject === subjectFilter)
     }
 
     // Filter by date range

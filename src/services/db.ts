@@ -96,9 +96,10 @@ export async function updateNote(
     const newTags = new Set(patch.tags)
 
     // Decrement removed tags
-    for (const tag of oldTags) {
+    for (const tagRaw of oldTags) {
+      const tag = tagRaw as string
       if (!newTags.has(tag)) {
-        const tagRec = await tx.objectStore('tags').get(tag)
+        const tagRec: TagRecord | undefined = await tx.objectStore('tags').get(tag)
         if (tagRec) {
           const newCount = tagRec.count - 1
           if (newCount <= 0) {

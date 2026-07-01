@@ -96,12 +96,12 @@ function removeTag(tag: string) {
   tags.value = tags.value.filter((t) => t !== tag)
 }
 
-function save(autoTitle = false) {
+async function save(autoTitle = false) {
   const finalTitle = title.value.trim() || (autoTitle ? '未命名笔记' : '')
   if (!finalTitle && autoTitle) return
 
   if (isNew.value) {
-    const id = store.addItem(
+    const id = await store.addItem(
       finalTitle,
       content.value,
       summary.value.trim(),

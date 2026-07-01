@@ -59,14 +59,14 @@ export const useDraftStore = defineStore('draft', () => {
     }
   }
 
-  function promoteToNote(): string | null {
+  async function promoteToNote(): Promise<string | null> {
     if (!draftContent.value.trim() && !draftTitle.value.trim()) {
       return null
     }
     const knowledgeStore = useKnowledgeStore()
     const finalTitle = draftTitle.value.trim() || '未命名笔记'
     const finalTags = [...draftTags.value]
-    const id = knowledgeStore.addItem(finalTitle, draftContent.value, '', [], finalTags, draftSubject.value)
+    const id = await knowledgeStore.addItem(finalTitle, draftContent.value, '', [], finalTags, draftSubject.value)
     clearDraft()
     return id
   }
