@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import type { DraftState } from '@/types'
 import { useKnowledgeStore } from '@/stores/knowledge'
 import { getDraft, saveDraft, deleteDraft } from '@/services/db'
@@ -12,6 +12,15 @@ export const useDraftStore = defineStore('draft', () => {
   const lastSaved = ref<number | null>(null)
   const isLoaded = ref(false)
 
+  // Track the last persisted state to detect actual changes
+  const _lastPersistedContent = ref('')
+  const _lastPersistedTitle = ref('')
+
+  /** True when draft has been modified since the last time it was persisted (loaded or saved) */
+  const hasChanges = computed(() => {
+    return draftContent.value !== _lastPersistedContent.value || draftTitle.value !== _lastPersistedTitle.value
+  })
+
   async function loadDraft(): Promise<void> {
     try {
       const stored = await getDraft()
@@ -21,6 +30,9 @@ export const useDraftStore = defineStore('draft', () => {
         draftTags.value = stored.tags ?? []
         draftSubject.value = stored.subject ?? ''
         lastSaved.value = stored.lastSaved ?? null
+        // Snapshot the loaded state so auto-save doesn't fire immediately
+        _lastPersistedContent.value = draftContent.value
+        _lastPersistedTitle.value = draftTitle.value
       }
     } catch (err) {
       console.warn('Failed to load draft from IndexedDB:', err)
@@ -41,6 +53,8 @@ export const useDraftStore = defineStore('draft', () => {
     try {
       await saveDraft(state)
       lastSaved.value = now
+      _lastPersistedContent.value = draftContent.value
+      _lastPersistedTitle.value = draftTitle.value
     } catch (err) {
       console.warn('Failed to save draft to IndexedDB:', err)
     }
@@ -78,6 +92,7 @@ export const useDraftStore = defineStore('draft', () => {
     draftSubject,
     lastSaved,
     isLoaded,
+    hasChanges,
     loadDraft,
     saveDraft: persist,
     clearDraft,

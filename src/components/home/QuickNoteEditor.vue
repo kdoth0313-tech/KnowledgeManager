@@ -14,21 +14,21 @@ function toggleExpanded(): void {
   expanded.value = !expanded.value
 }
 
-// Debounced save on content change (3 seconds)
+// Debounced save on content change (3 seconds) — only when actual changes exist
 watchDebounced(
   () => draftStore.draftContent,
   () => {
-    if (draftStore.draftContent.trim()) {
+    if (draftStore.draftContent.trim() && draftStore.hasChanges) {
       draftStore.saveDraft()
     }
   },
   { debounce: 3000, maxWait: 5000 },
 )
 
-// Periodic save every 30 seconds
+// Periodic save every 30 seconds — only when actual changes exist
 const { pause: pauseInterval, resume: resumeInterval } = useIntervalFn(
   () => {
-    if (draftStore.draftContent.trim()) {
+    if (draftStore.draftContent.trim() && draftStore.hasChanges) {
       draftStore.saveDraft()
     }
   },
