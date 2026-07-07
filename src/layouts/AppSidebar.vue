@@ -129,9 +129,11 @@ function onNavClick(): void {
   z-index: 1100;
   width: 36px;
   height: 36px;
-  background: #1e1e2e;
-  border: none;
-  border-radius: 6px;
+  background: rgba(15, 15, 26, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--color-glass-border);
+  border-radius: var(--radius-sm);
   cursor: pointer;
   flex-direction: column;
   align-items: center;
@@ -144,7 +146,7 @@ function onNavClick(): void {
   display: block;
   width: 18px;
   height: 2px;
-  background: #cdd6f4;
+  background: var(--color-text-muted);
   border-radius: 1px;
   transition: all 0.2s ease;
 }
@@ -170,13 +172,15 @@ function onNavClick(): void {
 .sidebar {
   width: 240px;
   height: 100vh;
-  background: linear-gradient(180deg, #1e1e2e 0%, #181825 100%);
-  color: #cdd6f4;
+  background: rgba(15, 15, 26, 0.85);
+  backdrop-filter: blur(20px) saturate(1.2);
+  -webkit-backdrop-filter: blur(20px) saturate(1.2);
+  color: var(--color-text);
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
   user-select: none;
-  border-right: 1px solid #11111b;
+  border-right: 1px solid var(--color-glass-border);
 }
 
 .sidebar-brand {
@@ -184,19 +188,23 @@ function onNavClick(): void {
   align-items: center;
   gap: 0.6rem;
   padding: 1.35rem 1.15rem;
-  border-bottom: 1px solid #313244;
+  border-bottom: 1px solid var(--color-glass-border);
 }
 
 .brand-icon {
   font-size: 1.5rem;
-  filter: drop-shadow(0 2px 4px rgba(88, 101, 242, 0.4));
+  filter: drop-shadow(0 2px 8px rgba(108, 92, 231, 0.5));
 }
 
 .brand-text {
   font-size: 1.02rem;
   font-weight: 700;
-  color: #f5f5f5;
+  color: var(--color-text);
   letter-spacing: 0.01em;
+  background: linear-gradient(135deg, var(--color-text), var(--color-accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .sidebar-nav {
@@ -211,23 +219,43 @@ function onNavClick(): void {
   align-items: center;
   gap: 0.65rem;
   padding: 0.6rem 0.8rem;
-  color: #a6adc8;
+  color: var(--color-text-muted);
   text-decoration: none;
   font-size: 0.92rem;
-  transition: background var(--ease), color var(--ease), transform var(--ease);
-  border-radius: 8px;
+  transition: all var(--ease);
+  border-radius: var(--radius-md);
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-item::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--color-primary-tint), transparent);
+  opacity: 0;
+  transition: opacity var(--ease);
 }
 
 .nav-item:hover {
-  background: #313244;
-  color: #f5f5f5;
+  background: var(--color-glass-hover);
+  color: var(--color-text);
+  transform: translateX(2px);
+}
+
+.nav-item:hover::before {
+  opacity: 1;
 }
 
 .nav-item.active {
-  background: linear-gradient(135deg, #5865f2 0%, #7c5cff 100%);
+  background: linear-gradient(135deg, #6c5ce7 0%, #a855f7 100%);
   color: #fff;
   font-weight: 600;
-  box-shadow: 0 4px 12px rgba(88, 101, 242, 0.35);
+  box-shadow: 0 4px 20px rgba(108, 92, 231, 0.4);
+}
+
+.nav-item.active::before {
+  display: none;
 }
 
 .nav-icon {
@@ -238,16 +266,16 @@ function onNavClick(): void {
 
 /* Subject navigation section */
 .sidebar-subjects {
-  border-top: 1px solid #313244;
+  border-top: 1px solid var(--color-glass-border);
   padding: 0.75rem 0;
 }
 
 .sidebar-section-title {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 600;
-  color: #a6adc8;
+  color: var(--color-text-faint);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   padding: 0.4rem 1.25rem 0.5rem;
 }
 
@@ -265,9 +293,9 @@ function onNavClick(): void {
   gap: 0.55rem;
   background: none;
   border: none;
-  color: #a6adc8;
+  color: var(--color-text-muted);
   padding: 0.4rem 0.55rem;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   font-size: 0.85rem;
   cursor: pointer;
   transition: all 0.15s;
@@ -278,12 +306,12 @@ function onNavClick(): void {
 }
 
 .subject-nav-item:hover {
-  background: #313244;
-  color: #f5f5f5;
+  background: var(--color-glass-hover);
+  color: var(--color-text);
 }
 
 .subject-nav-item.active {
-  background: #313244;
+  background: var(--color-glass-hover);
   color: #fff;
   font-weight: 600;
   border-left-color: var(--sc);
@@ -305,10 +333,10 @@ function onNavClick(): void {
 
 .subject-nav-count {
   font-size: 0.7rem;
-  background: #45475a;
-  color: #cdd6f4;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--color-text-muted);
   padding: 0.05rem 0.4rem;
-  border-radius: 8px;
+  border-radius: var(--radius-pill);
   flex-shrink: 0;
 }
 
@@ -318,7 +346,7 @@ function onNavClick(): void {
   display: flex;
   flex-direction: column;
   min-height: 0;
-  border-top: 1px solid #313244;
+  border-top: 1px solid var(--color-glass-border);
   padding: 0.75rem 0;
 }.sidebar-tags-header {
   display: flex;
@@ -328,19 +356,19 @@ function onNavClick(): void {
 }
 
 .sidebar-tags-title {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 600;
-  color: #a6adc8;
+  color: var(--color-text-faint);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
 }
 
 .sidebar-tags-count {
   font-size: 0.7rem;
-  color: #585b70;
-  background: #313244;
+  color: var(--color-text-muted);
+  background: rgba(255, 255, 255, 0.08);
   padding: 0.1rem 0.45rem;
-  border-radius: 8px;
+  border-radius: var(--radius-pill);
 }
 
 .sidebar-tags-list {
@@ -358,9 +386,9 @@ function onNavClick(): void {
   justify-content: space-between;
   background: none;
   border: none;
-  color: #a6adc8;
+  color: var(--color-text-muted);
   padding: 0.4rem 0.55rem;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   font-size: 0.83rem;
   cursor: pointer;
   transition: all 0.15s;
@@ -370,13 +398,14 @@ function onNavClick(): void {
 }
 
 .tag-pill:hover {
-  background: #313244;
-  color: #f5f5f5;
+  background: var(--color-glass-hover);
+  color: var(--color-text);
 }
 
 .tag-pill.active {
-  background: linear-gradient(135deg, #5865f2 0%, #7c5cff 100%);
+  background: linear-gradient(135deg, #6c5ce7 0%, #a855f7 100%);
   color: #fff;
+  box-shadow: 0 2px 12px rgba(108, 92, 231, 0.35);
 }
 
 .tag-pill.active .tag-pill-count {
@@ -392,22 +421,22 @@ function onNavClick(): void {
 
 .tag-pill-count {
   font-size: 0.7rem;
-  background: #313244;
-  color: #585b70;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--color-text-faint);
   padding: 0.05rem 0.4rem;
-  border-radius: 8px;
+  border-radius: var(--radius-pill);
   flex-shrink: 0;
   margin-left: 0.5rem;
 }
 
 .sidebar-footer {
   padding: 0.75rem 1rem;
-  border-top: 1px solid #313244;
+  border-top: 1px solid var(--color-glass-border);
 }
 
 .footer-text {
   font-size: 0.75rem;
-  color: #585b70;
+  color: var(--color-text-faint);
 }
 
 /* ── Responsive: Tablet & Mobile ── */

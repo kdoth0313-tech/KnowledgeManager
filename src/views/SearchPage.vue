@@ -92,7 +92,7 @@ const groupedTags = computed(() => store.tagList)
 .search-header h1 {
   font-size: 1.6rem;
   font-weight: 700;
-  color: #1e1e2e;
+  color: var(--color-text);
   margin-bottom: 1.5rem;
 }
 
@@ -104,16 +104,19 @@ const groupedTags = computed(() => store.tagList)
   width: 100%;
   padding: 0.75rem 1rem;
   font-size: 1rem;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
+  border: 1px solid var(--color-glass-border);
+  border-radius: var(--radius-md);
   outline: none;
-  background: #fff;
+  background: var(--color-glass);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--color-text);
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 
 .search-input:focus {
-  border-color: #5865f2;
-  box-shadow: 0 0 0 3px rgba(88, 101, 242, 0.1);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-tint);
 }
 
 .tag-cloud {
@@ -126,23 +129,23 @@ const groupedTags = computed(() => store.tagList)
 
 .tag-cloud-label {
   font-size: 0.85rem;
-  color: #999;
+  color: var(--color-text-faint);
   margin-right: 0.25rem;
 }
 
 .tag-pill {
-  background: #e8e8f0;
-  color: #5865f2;
+  background: rgba(108, 92, 231, 0.15);
+  color: #a78bfa;
   border: none;
   padding: 0.2rem 0.7rem;
-  border-radius: 12px;
+  border-radius: var(--radius-pill);
   font-size: 0.8rem;
   cursor: pointer;
-  transition: background 0.15s;
+  transition: all 0.15s;
 }
 
 .tag-pill:hover {
-  background: #5865f2;
+  background: var(--color-primary);
   color: #fff;
 }
 
@@ -152,20 +155,25 @@ const groupedTags = computed(() => store.tagList)
 
 .result-count {
   font-size: 0.85rem;
-  color: #999;
+  color: var(--color-text-muted);
   margin-bottom: 1rem;
 }
 
 .result-card {
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  background: var(--color-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--color-glass-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
   margin-bottom: 0.75rem;
-  transition: box-shadow 0.15s;
+  transition: all var(--ease-spring);
 }
 
 .result-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md), var(--shadow-glow);
+  border-color: rgba(108, 92, 231, 0.3);
+  transform: translateY(-2px);
 }
 
 .result-link {
@@ -178,13 +186,13 @@ const groupedTags = computed(() => store.tagList)
 .result-title {
   font-size: 1.05rem;
   font-weight: 600;
-  color: #1e1e2e;
+  color: var(--color-text);
   margin-bottom: 0.3rem;
 }
 
 .result-excerpt {
   font-size: 0.85rem;
-  color: #666;
+  color: var(--color-text-muted);
   line-height: 1.5;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -195,6 +203,6 @@ const groupedTags = computed(() => store.tagList)
 .search-hint {
   text-align: center;
   padding: 3rem 2rem;
-  color: #999;
+  color: var(--color-text-faint);
 }
 </style>

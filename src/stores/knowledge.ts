@@ -31,12 +31,13 @@ export const useKnowledgeStore = defineStore('knowledge', () => {
   }>({
     document: {
       id: 'id',
+      store: ['title', 'content'],
       index: [
-        { field: 'title', tokenize: 'forward' },
-        { field: 'summary', tokenize: 'forward' },
-        { field: 'content', tokenize: 'forward' },
-        { field: 'keywords', tokenize: 'forward' },
-        { field: 'tags', tokenize: 'forward' },
+        { field: 'title', encode: false, tokenize: 'full' },
+        { field: 'summary', encode: false, tokenize: 'full' },
+        { field: 'content', encode: false, tokenize: 'forward' },
+        { field: 'keywords', encode: false, tokenize: 'full' },
+        { field: 'tags', encode: false, tokenize: 'full' },
       ],
     },
   })
@@ -302,17 +303,16 @@ export const useKnowledgeStore = defineStore('knowledge', () => {
     for (const group of results) {
       if (!group.result) continue
       for (const match of group.result) {
-        const doc = match.doc as
-          | { id: string; title: string; content: string }
-          | undefined
-        if (!doc || seen.has(doc.id)) continue
-        seen.add(doc.id)
-        // Use the match's own score (FlexSearch per-document score)
+        // With enrich:true and store, match is { id: string, doc: { title, content, ... } }
+        const id = (match as unknown as { id: string }).id
+        const stored = (match as unknown as { doc?: { title?: string; content?: string } }).doc
+        if (!id || seen.has(id)) continue
+        seen.add(id)
         const score = typeof (match as unknown as { score?: number }).score === 'number' ? (match as unknown as { score: number }).score : 0
         merged.push({
-          id: doc.id,
-          title: doc.title,
-          excerpt: doc.content.slice(0, 200),
+          id,
+          title: stored?.title ?? '',
+          excerpt: (stored?.content ?? '').slice(0, 200),
           score,
         })
       }

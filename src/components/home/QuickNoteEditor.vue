@@ -148,9 +148,12 @@ function formatLastSaved(ts: number): string {
 <style scoped>
 .quick-note {
   margin-bottom: 2rem;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  background: var(--color-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--color-glass-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
   overflow: hidden;
 }
 
@@ -165,22 +168,22 @@ function formatLastSaved(ts: number): string {
 }
 
 .quick-note-header:hover {
-  background: #f8f8fb;
+  background: var(--color-glass-hover);
 }
 
 .quick-note-title {
   font-size: 1rem;
   font-weight: 600;
-  color: #1e1e2e;
+  color: var(--color-text);
 }
 
 .quick-note-indicator {
   font-size: 0.8rem;
-  color: #999;
+  color: var(--color-text-faint);
 }
 
 .quick-note-body {
-  border-top: 1px solid #f0f0f0;
+  border-top: 1px solid var(--color-glass-border);
 }
 
 /* Action bar */
@@ -189,44 +192,46 @@ function formatLastSaved(ts: number): string {
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem 1.25rem;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--color-glass-border);
 }
 
 .btn-promote {
-  background: #5865f2;
+  background: linear-gradient(135deg, #6c5ce7, #a855f7);
   color: #fff;
   border: none;
   padding: 0.35rem 1rem;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
   font-size: 0.85rem;
   font-weight: 600;
-  transition: background 0.15s;
+  transition: all var(--ease);
+  box-shadow: 0 2px 8px rgba(108, 92, 231, 0.3);
 }
 
 .btn-promote:hover:not(:disabled) {
-  background: #4752c4;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(108, 92, 231, 0.4);
 }
 
 .btn-promote:disabled {
-  opacity: 0.5;
+  opacity: 0.4;
   cursor: not-allowed;
 }
 
 .btn-clear-draft {
   background: transparent;
-  color: #999;
-  border: 1px solid #ddd;
+  color: var(--color-text-faint);
+  border: 1px solid var(--color-glass-border);
   padding: 0.35rem 0.85rem;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
   font-size: 0.85rem;
   transition: all 0.15s;
 }
 
 .btn-clear-draft:hover:not(:disabled) {
-  color: #e53935;
-  border-color: #e53935;
+  color: var(--color-danger);
+  border-color: var(--color-danger);
 }
 
 .btn-clear-draft:disabled {
@@ -236,18 +241,18 @@ function formatLastSaved(ts: number): string {
 
 .last-saved-indicator {
   font-size: 0.8rem;
-  color: #4caf50;
+  color: var(--color-success);
   margin-left: auto;
 }
 
 .promoted-indicator {
   font-size: 0.8rem;
-  color: #4caf50;
+  color: var(--color-success);
   margin-left: auto;
 }
 
 .promoted-link {
-  color: #5865f2;
+  color: var(--color-accent);
   text-decoration: underline;
   margin-left: 0.25rem;
   font-weight: 600;
@@ -267,17 +272,17 @@ function formatLastSaved(ts: number): string {
 }
 
 .pane-editor {
-  border-right: 1px solid #e0e0e0;
+  border-right: 1px solid var(--color-glass-border);
 }
 
 .pane-preview {
-  background: #fafafa;
+  background: rgba(0, 0, 0, 0.15);
 }
 
 .pane-label {
   font-size: 0.75rem;
   font-weight: 600;
-  color: #999;
+  color: var(--color-text-faint);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   padding: 0.5rem 1rem 0.25rem;
@@ -320,15 +325,15 @@ function formatLastSaved(ts: number): string {
   font-size: 1.15rem;
   font-weight: 600;
   border: none;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--color-glass-border);
   outline: none;
   background: transparent;
-  color: #1e1e2e;
+  color: var(--color-text);
   padding: 0.75rem 1rem;
 }
 
 .draft-title-input::placeholder {
-  color: #ccc;
+  color: var(--color-text-faint);
 }
 
 /* Responsive: stack panes on narrow screens */

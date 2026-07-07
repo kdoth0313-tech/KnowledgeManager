@@ -50,7 +50,7 @@ function onNoteSaved(id: string): void {
 .page-header h1 {
   font-size: 1.7rem;
   font-weight: 800;
-  color: var(--color-text, #1e1e2e);
+  color: var(--color-text);
   letter-spacing: -0.01em;
   position: relative;
   padding-left: 0.85rem;
@@ -64,28 +64,28 @@ function onNoteSaved(id: string): void {
   transform: translateY(-50%);
   width: 4px;
   height: 1.4rem;
-  border-radius: var(--radius-pill, 999px);
-  background: linear-gradient(180deg, #5865f2, #7c5cff);
+  border-radius: var(--radius-pill);
+  background: linear-gradient(180deg, var(--color-primary), var(--color-accent));
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #5865f2 0%, #7c5cff 100%);
+  background: linear-gradient(135deg, #6c5ce7 0%, #a855f7 100%);
   color: #fff;
   border: none;
   padding: 0.55rem 1.35rem;
-  border-radius: var(--radius-sm, 6px);
+  border-radius: var(--radius-sm);
   text-decoration: none;
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
-  transition: transform var(--ease, 0.18s), box-shadow var(--ease, 0.18s);
+  transition: transform var(--ease), box-shadow var(--ease);
   font-family: inherit;
-  box-shadow: 0 4px 12px rgba(88, 101, 242, 0.3);
+  box-shadow: 0 4px 16px rgba(108, 92, 231, 0.35);
 }
 
 .btn-primary:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(88, 101, 242, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(108, 92, 231, 0.45);
 }
 
 .btn-primary:active {

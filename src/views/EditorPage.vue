@@ -5,6 +5,7 @@ import { useKnowledgeStore } from '@/stores/knowledge'
 import MarkdownEditor from '@/components/editor/MarkdownEditor.vue'
 import SubjectPicker from '@/components/common/SubjectPicker.vue'
 import { useExportPdf } from '@/composables/useExportPdf'
+import { useDraggable } from '@/composables/useDraggable'
 
 const route = useRoute()
 const router = useRouter()
@@ -36,6 +37,10 @@ const keywords = ref<string[]>([...(existing.value?.keywords ?? [])])
 const tagInput = ref('')
 const tags = ref<string[]>([...(existing.value?.tags ?? [])])
 const saved = ref(false)
+const leaving = ref(false)
+const isFloating = ref(false)
+const subjectError = ref(false)
+const { x, y, isDragging, onDragStart } = useDraggable()
 
 const summaryLength = computed(() => summary.value.length)
 
@@ -96,9 +101,20 @@ function removeTag(tag: string) {
   tags.value = tags.value.filter((t) => t !== tag)
 }
 
+// Clear subject error when user selects a subject
+watch(subject, (val) => {
+  if (val) subjectError.value = false
+})
+
 async function save(autoTitle = false, navigateAfterSave = true) {
   const finalTitle = title.value.trim() || (autoTitle ? '未命名笔记' : '')
   if (!finalTitle && autoTitle) return
+
+  // Require subject selection before saving
+  if (!subject.value) {
+    subjectError.value = true
+    return
+  }
 
   if (isNew.value) {
     const id = await store.addItem(
@@ -109,8 +125,8 @@ async function save(autoTitle = false, navigateAfterSave = true) {
       [...tags.value],
       subject.value,
     )
-    // Only navigate when saving manually (not on unmount leave)
-    if (navigateAfterSave) {
+    // Only navigate when saving manually AND not already leaving the page
+    if (navigateAfterSave && !leaving.value) {
       router.replace({ name: 'editor', params: { id } })
     }
   } else if (itemId.value) {
@@ -119,7 +135,7 @@ async function save(autoTitle = false, navigateAfterSave = true) {
       content: content.value,
       summary: summary.value.trim(),
       keywords: [...keywords.value],
-      tags: tags.value,
+      tags: [...tags.value],
       subject: subject.value,
     })
   }
@@ -139,9 +155,11 @@ watch([title, content, summary, keywords, tags, subject], () => {
 })
 
 onBeforeUnmount(() => {
+  leaving.value = true
   if (autoSaveTimer) clearTimeout(autoSaveTimer)
-  // Save on leave without navigating (user is intentionally leaving the editor)
-  if (title.value.trim() || content.value.trim()) {
+  // Only auto-save on leave for EXISTING notes (not unsaved new drafts).
+  // New notes are saved via auto-save timer (3s) or manual save button.
+  if (!isNew.value && (title.value.trim() || content.value.trim())) {
     save(title.value.trim().length === 0, false)
   }
 })
@@ -168,6 +186,10 @@ function sharedTagCount(itemId: string): number {
   return item.tags.filter((t) => currentTags.has(t)).length
 }
 
+function toggleFloating(): void {
+  isFloating.value = !isFloating.value
+}
+
 function handleExportPdf(): void {
   const note = {
     id: itemId.value || '',
@@ -185,20 +207,40 @@ function handleExportPdf(): void {
 </script>
 
 <template>
-  <div class="editor-layout" @keydown="onKeydown">
+  <!-- Floating backdrop (click to dock back) -->
+  <div v-if="isFloating" class="floating-backdrop" @click="toggleFloating"></div>
+
+  <div
+    class="editor-layout"
+    :class="{ floating: isFloating }"
+    :style="isFloating ? { left: x + 'px', top: y + 'px' } : undefined"
+    @keydown="onKeydown"
+  >
     <!-- Main editor column -->
     <div class="editor-main">
       <div class="editor-page">
-        <header class="editor-header">
+        <header
+          class="editor-header"
+          :class="{ 'drag-handle': isFloating, 'is-dragging': isDragging }"
+          @mousedown="isFloating ? onDragStart($event) : undefined"
+        >
           <input
             v-model="title"
             type="text"
             class="title-input"
             placeholder="输入标题..."
+            @mousedown.stop
           />
 
-          <div class="header-actions">
+          <div class="header-actions" @mousedown.stop>
             <span v-if="saved" class="saved-badge">已保存 ✓</span>
+            <button
+              class="btn-float"
+              :title="isFloating ? '还原到页面' : '弹出为浮动窗口'"
+              @click="toggleFloating"
+            >
+              {{ isFloating ? '📌' : '📋' }}
+            </button>
             <button
               v-if="!isNew"
               class="btn-export"
@@ -213,8 +255,11 @@ function handleExportPdf(): void {
 
         <!-- Subject selector -->
         <div class="meta-field">
-          <label class="meta-label">学科分类</label>
-          <SubjectPicker v-model="subject" />
+          <label class="meta-label">
+            学科分类
+            <span v-if="subjectError" class="subject-error-msg">请选择学科分类</span>
+          </label>
+          <SubjectPicker v-model="subject" :class="{ 'subject-error': subjectError }" />
         </div>
 
         <!-- Summary input -->
@@ -357,10 +402,10 @@ function handleExportPdf(): void {
 .sidebar-title {
   font-size: 0.85rem;
   font-weight: 700;
-  color: #1e1e2e;
+  color: var(--color-text);
   margin-bottom: 0.75rem;
   padding-bottom: 0.5rem;
-  border-bottom: 2px solid #5865f2;
+  border-bottom: 2px solid var(--color-primary);
 }
 
 .related-list {
@@ -375,23 +420,25 @@ function handleExportPdf(): void {
 .related-card {
   display: block;
   padding: 0.6rem 0.7rem;
-  background: #fff;
-  border-radius: 6px;
+  background: var(--color-glass);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: var(--radius-sm);
   text-decoration: none;
   color: inherit;
-  border: 1px solid #eee;
+  border: 1px solid var(--color-glass-border);
   transition: box-shadow 0.15s, border-color 0.15s;
 }
 
 .related-card:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  border-color: #5865f2;
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-primary);
 }
 
 .related-title {
   font-size: 0.83rem;
   font-weight: 600;
-  color: #1e1e2e;
+  color: var(--color-text);
   margin: 0 0 0.3rem;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -407,17 +454,17 @@ function handleExportPdf(): void {
 }
 
 .related-overlap {
-  color: #5865f2;
+  color: #a78bfa;
   font-weight: 600;
 }
 
 .related-date {
-  color: #bbb;
+  color: var(--color-text-faint);
 }
 
 .related-summary {
   font-size: 0.72rem;
-  color: #888;
+  color: var(--color-text-muted);
   line-height: 1.4;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -441,12 +488,12 @@ function handleExportPdf(): void {
   border: none;
   outline: none;
   background: transparent;
-  color: #1e1e2e;
+  color: var(--color-text);
   padding: 0.5rem 0;
 }
 
 .title-input::placeholder {
-  color: #ccc;
+  color: var(--color-text-faint);
 }
 
 .header-actions {
@@ -462,29 +509,105 @@ function handleExportPdf(): void {
 }
 
 .btn-save {
-  background: linear-gradient(135deg, #5865f2 0%, #7c5cff 100%);
+  background: linear-gradient(135deg, #6c5ce7 0%, #a855f7 100%);
   color: #fff;
   border: none;
   padding: 0.45rem 1.35rem;
-  border-radius: var(--radius-sm, 6px);
+  border-radius: var(--radius-sm);
   cursor: pointer;
   font-size: 0.9rem;
   font-weight: 600;
-  transition: transform var(--ease, 0.18s), box-shadow var(--ease, 0.18s);
-  box-shadow: 0 4px 12px rgba(88, 101, 242, 0.3);
+  transition: transform var(--ease), box-shadow var(--ease);
+  box-shadow: 0 4px 16px rgba(108, 92, 231, 0.35);
 }
 
 .btn-save:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(88, 101, 242, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(108, 92, 231, 0.45);
+}
+
+.btn-float {
+  background: var(--color-glass);
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-glass-border);
+  padding: 0.35rem 0.55rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.15s;
+  line-height: 1;
+}
+
+.btn-float:hover {
+  background: var(--color-primary);
+  color: #fff;
+  border-color: var(--color-primary);
+}
+
+/* ── Floating window ── */
+.floating-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  animation: fadeIn 0.15s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.editor-layout.floating {
+  position: fixed;
+  z-index: 1000;
+  width: 80vw;
+  height: 80vh;
+  background: rgba(20, 20, 35, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--color-glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5), var(--shadow-glow);
+  padding: 1rem;
+  gap: 0.75rem;
+}
+
+.editor-layout.floating .editor-main {
+  background: var(--color-glass);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  box-shadow: none;
+}
+
+.editor-layout.floating .editor-sidebar {
+  display: none;
+}
+
+/* Drag handle */
+.drag-handle {
+  cursor: grab;
+  user-select: none;
+}
+
+.drag-handle.is-dragging {
+  cursor: grabbing;
+}
+
+/* Prevent title input from interfering with drag */
+.drag-handle .title-input {
+  pointer-events: auto;
+  cursor: text;
 }
 
 .btn-export {
-  background: #f5f5f5;
-  color: #666;
-  border: 1px solid #e0e0e0;
+  background: var(--color-glass);
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-glass-border);
   padding: 0.35rem 0.6rem;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
   font-size: 1rem;
   transition: all 0.15s;
@@ -492,9 +615,9 @@ function handleExportPdf(): void {
 }
 
 .btn-export:hover {
-  background: #5865f2;
+  background: var(--color-primary);
   color: #fff;
-  border-color: #5865f2;
+  border-color: var(--color-primary);
 }
 
 /* Meta fields (summary + keywords) */
@@ -508,29 +631,49 @@ function handleExportPdf(): void {
   gap: 0.4rem;
   font-size: 0.8rem;
   font-weight: 600;
-  color: #666;
+  color: var(--color-text-muted);
   margin-bottom: 0.25rem;
+}
+
+.subject-error-msg {
+  color: var(--color-danger);
+  font-size: 0.72rem;
+  font-weight: 500;
+  animation: shake 0.3s ease;
+}
+
+:deep(.subject-error) .subject-chip:not(.active) {
+  border-color: rgba(255, 118, 117, 0.4);
+  animation: shake 0.4s ease;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-3px); }
+  40% { transform: translateX(3px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(2px); }
 }
 
 .meta-count {
   font-size: 0.7rem;
   font-weight: 500;
-  color: #bbb;
+  color: var(--color-text-faint);
 }
 
-.meta-count.count-ok { color: #4caf50; }
-.meta-count.count-warn { color: #ff9800; }
-.meta-count.count-over { color: #e53935; }
+.meta-count.count-ok { color: var(--color-success); }
+.meta-count.count-warn { color: var(--color-warning); }
+.meta-count.count-over { color: var(--color-danger); }
 
 .summary-textarea {
   width: 100%;
   padding: 0.45rem 0.65rem;
   font-size: 0.88rem;
-  border: 1px solid #e0e0e0;
-  border-radius: 6px;
+  border: 1px solid var(--color-glass-border);
+  border-radius: var(--radius-sm);
   outline: none;
-  background: #fff;
-  color: #333;
+  background: var(--color-glass);
+  color: var(--color-text);
   resize: none;
   font-family: inherit;
   line-height: 1.5;
@@ -538,11 +681,11 @@ function handleExportPdf(): void {
 }
 
 .summary-textarea:focus {
-  border-color: #5865f2;
+  border-color: var(--color-primary);
 }
 
 .summary-textarea::placeholder {
-  color: #ccc;
+  color: var(--color-text-faint);
 }
 
 .chip-input-row {
@@ -551,22 +694,22 @@ function handleExportPdf(): void {
   gap: 0.3rem;
   flex-wrap: wrap;
   padding: 0.35rem 0.55rem;
-  border: 1px solid #e0e0e0;
-  border-radius: 6px;
-  background: #fff;
+  border: 1px solid var(--color-glass-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-glass);
   min-height: 2.2rem;
   transition: border-color 0.15s;
 }
 
 .chip-input-row:focus-within {
-  border-color: #5865f2;
+  border-color: var(--color-primary);
 }
 
 .chip {
-  background: #e8e8f0;
-  color: #5865f2;
+  background: rgba(108, 92, 231, 0.15);
+  color: #a78bfa;
   padding: 0.1rem 0.45rem;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   font-size: 0.78rem;
   display: flex;
   align-items: center;
@@ -576,7 +719,7 @@ function handleExportPdf(): void {
 .chip-remove {
   background: none;
   border: none;
-  color: #999;
+  color: var(--color-text-faint);
   cursor: pointer;
   font-size: 0.9rem;
   padding: 0;
@@ -584,7 +727,7 @@ function handleExportPdf(): void {
 }
 
 .chip-remove:hover {
-  color: #e53935;
+  color: var(--color-danger);
 }
 
 .chip-inline-input {
@@ -596,10 +739,11 @@ function handleExportPdf(): void {
   flex: 1;
   background: transparent;
   font-family: inherit;
+  color: var(--color-text);
 }
 
 .chip-inline-input::placeholder {
-  color: #ccc;
+  color: var(--color-text-faint);
 }
 
 .tag-bar {
@@ -613,15 +757,15 @@ function handleExportPdf(): void {
 
 .tag-label {
   font-size: 0.85rem;
-  color: #999;
+  color: var(--color-text-faint);
   margin-right: 0.25rem;
 }
 
 .tag-chip {
-  background: #e8e8f0;
-  color: #5865f2;
+  background: rgba(108, 92, 231, 0.15);
+  color: #a78bfa;
   padding: 0.15rem 0.5rem;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   font-size: 0.8rem;
   display: flex;
   align-items: center;
@@ -631,7 +775,7 @@ function handleExportPdf(): void {
 .tag-remove {
   background: none;
   border: none;
-  color: #999;
+  color: var(--color-text-faint);
   cursor: pointer;
   font-size: 1rem;
   padding: 0;
@@ -639,37 +783,38 @@ function handleExportPdf(): void {
 }
 
 .tag-remove:hover {
-  color: #e53935;
+  color: var(--color-danger);
 }
 
 .tag-expand-btn {
   background: none;
-  border: 1px dashed #ccc;
-  color: #5865f2;
+  border: 1px dashed var(--color-glass-border);
+  color: var(--color-primary);
   padding: 0.15rem 0.5rem;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   font-size: 0.75rem;
   cursor: pointer;
   font-family: inherit;
 }
 
 .tag-expand-btn:hover {
-  border-color: #5865f2;
-  background: #e8e8f0;
+  border-color: var(--color-primary);
+  background: var(--color-primary-tint);
 }
 
 .tag-input {
-  border: 1px dashed #ccc;
+  border: 1px dashed var(--color-glass-border);
   outline: none;
   padding: 0.15rem 0.5rem;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   font-size: 0.8rem;
   width: 100px;
   background: transparent;
+  color: var(--color-text);
 }
 
 .tag-input:focus {
-  border-color: #5865f2;
+  border-color: var(--color-primary);
 }
 
 .editor-container {
@@ -680,7 +825,7 @@ function handleExportPdf(): void {
 .editor-footer {
   padding-top: 0.75rem;
   font-size: 0.75rem;
-  color: #999;
+  color: var(--color-text-faint);
   text-align: right;
 }
 
@@ -697,12 +842,23 @@ function handleExportPdf(): void {
     flex-direction: column;
   }
 
+  .editor-layout.floating {
+    width: 92vw;
+    height: 85vh;
+    padding: 0.5rem;
+  }
+
   .title-input {
     font-size: 1.2rem;
   }
 
   .header-actions {
     gap: 0.4rem;
+  }
+
+  .btn-float {
+    font-size: 0.85rem;
+    padding: 0.3rem 0.45rem;
   }
 
   .btn-save {
@@ -719,8 +875,8 @@ function handleExportPdf(): void {
     display: none;
   }
 
-  .meta-field {
-    margin-bottom: 0.4rem;
+  .meta-label {
+    font-size: 0.75rem;
   }
 
   .summary-textarea {

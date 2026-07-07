@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import { useKnowledgeStore } from '@/stores/knowledge'
 import MarkdownEditor from '@/components/editor/MarkdownEditor.vue'
 import SubjectPicker from '@/components/common/SubjectPicker.vue'
@@ -20,10 +20,16 @@ const keywords = ref<string[]>([])
 const tagInput = ref('')
 const tags = ref<string[]>([])
 const isSaving = ref(false)
+const subjectError = ref(false)
 
 const canSave = computed(() => title.value.trim() || content.value.trim())
 
 const summaryLength = computed(() => summary.value.length)
+
+// Clear subject error when user selects a subject
+watch(subject, (val) => {
+  if (val) subjectError.value = false
+})
 
 function addKeyword(): void {
   const k = keywordInput.value.trim()
@@ -51,6 +57,10 @@ function removeTag(tag: string): void {
 
 async function save(): Promise<void> {
   if (!canSave.value) return
+  if (!subject.value) {
+    subjectError.value = true
+    return
+  }
   isSaving.value = true
   const finalTitle = title.value.trim() || '未命名笔记'
   const id = await store.addItem(
@@ -118,8 +128,11 @@ onBeforeUnmount(() => {
 
           <!-- Subject selector -->
           <div class="modal-field">
-            <label class="field-label">学科分类</label>
-            <SubjectPicker v-model="subject" />
+            <label class="field-label">
+              学科分类
+              <span v-if="subjectError" class="subject-error-msg">请选择学科分类</span>
+            </label>
+            <SubjectPicker v-model="subject" :class="{ 'subject-error': subjectError }" />
           </div>
 
           <!-- Summary input -->
@@ -212,7 +225,9 @@ onBeforeUnmount(() => {
   position: fixed;
   inset: 0;
   z-index: 1000;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -227,9 +242,12 @@ onBeforeUnmount(() => {
 
 /* Container */
 .modal-container {
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  background: rgba(20, 20, 35, 0.97);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--color-glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5), var(--shadow-glow);
   width: 100%;
   max-width: 780px;
   max-height: 90vh;
@@ -249,20 +267,20 @@ onBeforeUnmount(() => {
   align-items: center;
   justify-content: space-between;
   padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--color-glass-border);
 }
 
 .modal-header h2 {
   font-size: 1.15rem;
   font-weight: 700;
-  color: #1e1e2e;
+  color: var(--color-text);
 }
 
 .modal-close-btn {
   background: none;
   border: none;
   font-size: 1.5rem;
-  color: #999;
+  color: var(--color-text-faint);
   cursor: pointer;
   padding: 0;
   line-height: 1;
@@ -271,13 +289,13 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   transition: all 0.15s;
 }
 
 .modal-close-btn:hover {
-  background: #f0f0f0;
-  color: #333;
+  background: var(--color-glass-hover);
+  color: var(--color-text);
 }
 
 /* Body */
@@ -297,13 +315,13 @@ onBeforeUnmount(() => {
   border: none;
   outline: none;
   background: transparent;
-  color: #1e1e2e;
+  color: var(--color-text);
   padding: 0.25rem 0;
   margin-bottom: 0.75rem;
 }
 
 .modal-title-input::placeholder {
-  color: #ccc;
+  color: var(--color-text-faint);
 }
 
 /* Form fields */
@@ -317,13 +335,32 @@ onBeforeUnmount(() => {
   gap: 0.4rem;
   font-size: 0.8rem;
   font-weight: 600;
-  color: #666;
+  color: var(--color-text-muted);
   margin-bottom: 0.3rem;
 }
 
 .field-hint {
   font-weight: 400;
-  color: #bbb;
+  color: var(--color-text-faint);
+}
+
+.subject-error-msg {
+  color: var(--color-danger);
+  font-size: 0.72rem;
+  font-weight: 500;
+  animation: shake 0.3s ease;
+}
+
+:deep(.subject-error) .subject-chip:not(.active) {
+  border-color: rgba(255, 118, 117, 0.4);
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-3px); }
+  40% { transform: translateX(3px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(2px); }
 }
 
 .field-count {
@@ -338,22 +375,22 @@ onBeforeUnmount(() => {
 }
 
 .field-count.count-warn {
-  color: #ff9800;
+  color: var(--color-warning);
 }
 
 .field-count.count-over {
-  color: #e53935;
+  color: var(--color-danger);
 }
 
 .summary-textarea {
   width: 100%;
   padding: 0.5rem 0.75rem;
   font-size: 0.9rem;
-  border: 1px solid #e0e0e0;
-  border-radius: 6px;
+  border: 1px solid var(--color-glass-border);
+  border-radius: var(--radius-sm);
   outline: none;
-  background: #fff;
-  color: #333;
+  background: var(--color-glass);
+  color: var(--color-text);
   resize: none;
   font-family: inherit;
   line-height: 1.5;
@@ -361,12 +398,12 @@ onBeforeUnmount(() => {
 }
 
 .summary-textarea:focus {
-  border-color: #5865f2;
-  box-shadow: 0 0 0 3px rgba(88, 101, 242, 0.1);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-tint);
 }
 
 .summary-textarea::placeholder {
-  color: #ccc;
+  color: var(--color-text-faint);
 }
 
 /* Chip input row (shared by keywords & tags) */
@@ -377,23 +414,23 @@ onBeforeUnmount(() => {
   flex-wrap: wrap;
   margin-bottom: 0.75rem;
   padding: 0.4rem 0.6rem;
-  border: 1px solid #e0e0e0;
-  border-radius: 6px;
-  background: #fff;
+  border: 1px solid var(--color-glass-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-glass);
   min-height: 2.4rem;
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 
 .chip-input-row:focus-within {
-  border-color: #5865f2;
-  box-shadow: 0 0 0 3px rgba(88, 101, 242, 0.1);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-tint);
 }
 
 .chip {
-  background: #e8e8f0;
-  color: #5865f2;
+  background: rgba(108, 92, 231, 0.15);
+  color: #a78bfa;
   padding: 0.15rem 0.5rem;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   font-size: 0.8rem;
   display: flex;
   align-items: center;
@@ -403,7 +440,7 @@ onBeforeUnmount(() => {
 .chip-remove {
   background: none;
   border: none;
-  color: #999;
+  color: var(--color-text-faint);
   cursor: pointer;
   font-size: 1rem;
   padding: 0;
@@ -411,7 +448,7 @@ onBeforeUnmount(() => {
 }
 
 .chip-remove:hover {
-  color: #e53935;
+  color: var(--color-danger);
 }
 
 .chip-input {
@@ -422,11 +459,12 @@ onBeforeUnmount(() => {
   min-width: 120px;
   flex: 1;
   background: transparent;
+  color: var(--color-text);
   font-family: inherit;
 }
 
 .chip-input::placeholder {
-  color: #ccc;
+  color: var(--color-text-faint);
 }
 
 /* Editor area */
@@ -455,7 +493,7 @@ onBeforeUnmount(() => {
 
 .modal-hint {
   font-size: 0.75rem;
-  color: #bbb;
+  color: var(--color-text-faint);
 }
 
 .modal-footer-actions {
@@ -464,35 +502,38 @@ onBeforeUnmount(() => {
 }
 
 .btn-cancel {
-  background: #f5f5f5;
-  color: #666;
-  border: none;
+  background: var(--color-glass);
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-glass-border);
   padding: 0.5rem 1.25rem;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
   font-size: 0.9rem;
   font-weight: 500;
-  transition: background 0.15s;
+  transition: all 0.15s;
 }
 
 .btn-cancel:hover {
-  background: #e8e8e8;
+  background: var(--color-glass-hover);
+  color: var(--color-text);
 }
 
 .btn-save {
-  background: #5865f2;
+  background: linear-gradient(135deg, #6c5ce7, #a855f7);
   color: #fff;
   border: none;
   padding: 0.5rem 1.5rem;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
   font-size: 0.9rem;
   font-weight: 600;
-  transition: background 0.15s;
+  transition: all var(--ease);
+  box-shadow: 0 4px 12px rgba(108, 92, 231, 0.3);
 }
 
 .btn-save:hover:not(:disabled) {
-  background: #4752c4;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(108, 92, 231, 0.4);
 }
 
 .btn-save:disabled {

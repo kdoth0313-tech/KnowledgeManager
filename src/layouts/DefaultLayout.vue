@@ -22,8 +22,9 @@ import AppSidebar from './AppSidebar.vue'
 .main-content {
   flex: 1;
   overflow-y: auto;
-  background: var(--color-bg, #f4f5fb);
+  background: transparent;
   padding: 2rem;
+  position: relative;
 }
 
 /* ── Responsive ── */
