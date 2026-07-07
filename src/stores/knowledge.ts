@@ -33,11 +33,11 @@ export const useKnowledgeStore = defineStore('knowledge', () => {
       id: 'id',
       store: ['title', 'content'],
       index: [
-        { field: 'title', encode: false, tokenize: 'full' },
-        { field: 'summary', encode: false, tokenize: 'full' },
-        { field: 'content', encode: false, tokenize: 'forward' },
-        { field: 'keywords', encode: false, tokenize: 'full' },
-        { field: 'tags', encode: false, tokenize: 'full' },
+        { field: 'title', encode: false as unknown as (text: string) => string[], tokenize: 'full' },
+        { field: 'summary', encode: false as unknown as (text: string) => string[], tokenize: 'full' },
+        { field: 'content', encode: false as unknown as (text: string) => string[], tokenize: 'forward' },
+        { field: 'keywords', encode: false as unknown as (text: string) => string[], tokenize: 'full' },
+        { field: 'tags', encode: false as unknown as (text: string) => string[], tokenize: 'full' },
       ],
     },
   })
