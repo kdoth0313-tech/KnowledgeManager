@@ -3,12 +3,14 @@ import { ref } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 import { computed } from 'vue'
 import { useKnowledgeStore } from '@/stores/knowledge'
+import { useAuthStore } from '@/stores/auth'
 import { storeToRefs } from 'pinia'
 import { SUBJECTS } from '@/constants/subjects'
 
 const route = useRoute()
 const router = useRouter()
 const store = useKnowledgeStore()
+const authStore = useAuthStore()
 const { tagList, selectedTag, tagCounts, selectedSubject, subjectCounts } = storeToRefs(store)
 
 const sidebarOpen = ref(false)
@@ -114,7 +116,12 @@ function onNavClick(): void {
     </div>
 
     <div class="sidebar-footer">
-      <span class="footer-text">Vue 3 + TypeScript</span>
+      <div class="sidebar-user">
+        <span class="user-avatar">🔒</span>
+        <div class="user-info">
+          <button class="btn-logout" @click="authStore.logout(); router.push({ name: 'auth' })">退出登录</button>
+        </div>
+      </div>
     </div>
   </aside>
 </template>
@@ -434,9 +441,32 @@ function onNavClick(): void {
   border-top: 1px solid var(--color-glass-border);
 }
 
-.footer-text {
-  font-size: 0.75rem;
+.sidebar-user {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.user-avatar {
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.btn-logout {
+  background: none;
+  border: 1px solid var(--color-glass-border);
   color: var(--color-text-faint);
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.78rem;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+
+.btn-logout:hover {
+  border-color: var(--color-danger);
+  color: var(--color-danger);
 }
 
 /* ── Responsive: Tablet & Mobile ── */

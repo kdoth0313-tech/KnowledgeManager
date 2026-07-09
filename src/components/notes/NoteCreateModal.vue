@@ -24,8 +24,6 @@ const subjectError = ref(false)
 
 const canSave = computed(() => title.value.trim() || content.value.trim())
 
-const summaryLength = computed(() => summary.value.length)
-
 // Clear subject error when user selects a subject
 watch(subject, (val) => {
   if (val) subjectError.value = false
@@ -137,26 +135,12 @@ onBeforeUnmount(() => {
 
           <!-- Summary input -->
           <div class="modal-field">
-            <label class="field-label">
-              摘要
-              <span class="field-hint">（50-100字简短描述）</span>
-              <span
-                :class="[
-                  'field-count',
-                  { 'count-warn': summaryLength > 0 && summaryLength < 10 },
-                  { 'count-ok': summaryLength >= 10 && summaryLength <= 100 },
-                  { 'count-over': summaryLength > 100 },
-                ]"
-              >
-                {{ summaryLength }}/100
-              </span>
-            </label>
+            <label class="field-label">摘要</label>
             <textarea
               v-model="summary"
               class="summary-textarea"
               rows="2"
-              maxlength="120"
-              placeholder="输入笔记的简短摘要..."
+              placeholder="输入笔记的摘要..."
             ></textarea>
           </div>
 

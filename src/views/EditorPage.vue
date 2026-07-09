@@ -42,8 +42,6 @@ const isFloating = ref(false)
 const subjectError = ref(false)
 const { x, y, isDragging, onDragStart } = useDraggable()
 
-const summaryLength = computed(() => summary.value.length)
-
 // Related notes
 const relatedNotes = computed(() => {
   if (!itemId.value || isNew.value) return []
@@ -264,23 +262,12 @@ function handleExportPdf(): void {
 
         <!-- Summary input -->
         <div class="meta-field">
-          <label class="meta-label">
-            摘要
-            <span
-              :class="[
-                'meta-count',
-                { 'count-warn': summaryLength > 0 && summaryLength < 10 },
-                { 'count-ok': summaryLength >= 10 && summaryLength <= 100 },
-                { 'count-over': summaryLength > 100 },
-              ]"
-            >{{ summaryLength }}/100</span>
-          </label>
+          <label class="meta-label">摘要</label>
           <textarea
             v-model="summary"
             class="summary-textarea"
             rows="2"
-            maxlength="120"
-            placeholder="输入笔记的简短摘要（50-100字）..."
+            placeholder="输入笔记的摘要..."
           ></textarea>
         </div>
 
