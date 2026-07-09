@@ -104,12 +104,10 @@ const groupedTags = computed(() => store.tagList)
   width: 100%;
   padding: 0.75rem 1rem;
   font-size: 1rem;
-  border: 1px solid var(--color-glass-border);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   outline: none;
-  background: var(--color-glass);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: var(--color-surface);
   color: var(--color-text);
   transition: border-color 0.15s, box-shadow 0.15s;
 }
@@ -134,7 +132,7 @@ const groupedTags = computed(() => store.tagList)
 }
 
 .tag-pill {
-  background: rgba(108, 92, 231, 0.15);
+  background: var(--color-primary-tint);
   color: #a78bfa;
   border: none;
   padding: 0.2rem 0.7rem;
@@ -160,10 +158,8 @@ const groupedTags = computed(() => store.tagList)
 }
 
 .result-card {
-  background: var(--color-glass);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--color-glass-border);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
   margin-bottom: 0.75rem;
@@ -171,8 +167,8 @@ const groupedTags = computed(() => store.tagList)
 }
 
 .result-card:hover {
-  box-shadow: var(--shadow-md), var(--shadow-glow);
-  border-color: rgba(108, 92, 231, 0.3);
+  box-shadow: var(--shadow-sm);
+  border-color: var(--color-primary-tint);
   transform: translateY(-2px);
 }
 

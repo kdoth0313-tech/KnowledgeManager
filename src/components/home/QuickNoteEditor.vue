@@ -148,10 +148,8 @@ function formatLastSaved(ts: number): string {
 <style scoped>
 .quick-note {
   margin-bottom: 2rem;
-  background: var(--color-glass);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--color-glass-border);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
   overflow: hidden;
@@ -168,7 +166,7 @@ function formatLastSaved(ts: number): string {
 }
 
 .quick-note-header:hover {
-  background: var(--color-glass-hover);
+  background: var(--color-primary-tint);
 }
 
 .quick-note-title {
@@ -183,7 +181,7 @@ function formatLastSaved(ts: number): string {
 }
 
 .quick-note-body {
-  border-top: 1px solid var(--color-glass-border);
+  border-top: 1px solid var(--color-border);
 }
 
 /* Action bar */
@@ -192,11 +190,11 @@ function formatLastSaved(ts: number): string {
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem 1.25rem;
-  border-bottom: 1px solid var(--color-glass-border);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .btn-promote {
-  background: linear-gradient(135deg, #6c5ce7, #a855f7);
+  background: var(--color-text);
   color: #fff;
   border: none;
   padding: 0.35rem 1rem;
@@ -205,12 +203,12 @@ function formatLastSaved(ts: number): string {
   font-size: 0.85rem;
   font-weight: 600;
   transition: all var(--ease);
-  box-shadow: 0 2px 8px rgba(108, 92, 231, 0.3);
+  box-shadow: 0 2px 8px var(--color-primary-tint);
 }
 
 .btn-promote:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 4px 14px rgba(108, 92, 231, 0.4);
+  box-shadow: var(--shadow-md);
 }
 
 .btn-promote:disabled {
@@ -221,7 +219,7 @@ function formatLastSaved(ts: number): string {
 .btn-clear-draft {
   background: transparent;
   color: var(--color-text-faint);
-  border: 1px solid var(--color-glass-border);
+  border: 1px solid var(--color-border);
   padding: 0.35rem 0.85rem;
   border-radius: var(--radius-sm);
   cursor: pointer;
@@ -272,7 +270,7 @@ function formatLastSaved(ts: number): string {
 }
 
 .pane-editor {
-  border-right: 1px solid var(--color-glass-border);
+  border-right: 1px solid var(--color-border);
 }
 
 .pane-preview {
@@ -325,7 +323,7 @@ function formatLastSaved(ts: number): string {
   font-size: 1.15rem;
   font-weight: 600;
   border: none;
-  border-bottom: 1px solid var(--color-glass-border);
+  border-bottom: 1px solid var(--color-border);
   outline: none;
   background: transparent;
   color: var(--color-text);

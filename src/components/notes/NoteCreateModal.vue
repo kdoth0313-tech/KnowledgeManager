@@ -209,9 +209,7 @@ onBeforeUnmount(() => {
   position: fixed;
   inset: 0;
   z-index: 1000;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.25);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -226,12 +224,10 @@ onBeforeUnmount(() => {
 
 /* Container */
 .modal-container {
-  background: rgba(20, 20, 35, 0.97);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--color-glass-border);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5), var(--shadow-glow);
+  box-shadow: var(--shadow-lg);
   width: 100%;
   max-width: 780px;
   max-height: 90vh;
@@ -251,7 +247,7 @@ onBeforeUnmount(() => {
   align-items: center;
   justify-content: space-between;
   padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid var(--color-glass-border);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .modal-header h2 {
@@ -278,7 +274,7 @@ onBeforeUnmount(() => {
 }
 
 .modal-close-btn:hover {
-  background: var(--color-glass-hover);
+  background: var(--color-primary-tint);
   color: var(--color-text);
 }
 
@@ -336,7 +332,7 @@ onBeforeUnmount(() => {
 }
 
 :deep(.subject-error) .subject-chip:not(.active) {
-  border-color: rgba(255, 118, 117, 0.4);
+  border-color: #fde8e8;
 }
 
 @keyframes shake {
@@ -370,10 +366,10 @@ onBeforeUnmount(() => {
   width: 100%;
   padding: 0.5rem 0.75rem;
   font-size: 0.9rem;
-  border: 1px solid var(--color-glass-border);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
   outline: none;
-  background: var(--color-glass);
+  background: var(--color-surface);
   color: var(--color-text);
   resize: none;
   font-family: inherit;
@@ -398,9 +394,9 @@ onBeforeUnmount(() => {
   flex-wrap: wrap;
   margin-bottom: 0.75rem;
   padding: 0.4rem 0.6rem;
-  border: 1px solid var(--color-glass-border);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
-  background: var(--color-glass);
+  background: var(--color-surface);
   min-height: 2.4rem;
   transition: border-color 0.15s, box-shadow 0.15s;
 }
@@ -411,7 +407,7 @@ onBeforeUnmount(() => {
 }
 
 .chip {
-  background: rgba(108, 92, 231, 0.15);
+  background: var(--color-primary-tint);
   color: #a78bfa;
   padding: 0.15rem 0.5rem;
   border-radius: var(--radius-sm);
@@ -486,9 +482,9 @@ onBeforeUnmount(() => {
 }
 
 .btn-cancel {
-  background: var(--color-glass);
+  background: var(--color-surface);
   color: var(--color-text-muted);
-  border: 1px solid var(--color-glass-border);
+  border: 1px solid var(--color-border);
   padding: 0.5rem 1.25rem;
   border-radius: var(--radius-sm);
   cursor: pointer;
@@ -498,12 +494,12 @@ onBeforeUnmount(() => {
 }
 
 .btn-cancel:hover {
-  background: var(--color-glass-hover);
+  background: var(--color-primary-tint);
   color: var(--color-text);
 }
 
 .btn-save {
-  background: linear-gradient(135deg, #6c5ce7, #a855f7);
+  background: var(--color-text);
   color: #fff;
   border: none;
   padding: 0.5rem 1.5rem;
@@ -512,12 +508,12 @@ onBeforeUnmount(() => {
   font-size: 0.9rem;
   font-weight: 600;
   transition: all var(--ease);
-  box-shadow: 0 4px 12px rgba(108, 92, 231, 0.3);
+  box-shadow: 0 4px 12px var(--color-primary-tint);
 }
 
 .btn-save:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(108, 92, 231, 0.4);
+  box-shadow: var(--shadow-md);
 }
 
 .btn-save:disabled {

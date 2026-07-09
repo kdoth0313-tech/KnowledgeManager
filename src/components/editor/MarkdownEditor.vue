@@ -460,12 +460,10 @@ onBeforeUnmount(() => {
 .tiptap-wrapper {
   width: 100%;
   height: 100%;
-  border: 1px solid var(--color-glass-border);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   overflow: hidden;
-  background: var(--color-glass);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: var(--color-surface);
   position: relative;
   display: flex;
   flex-direction: column;
@@ -489,7 +487,7 @@ onBeforeUnmount(() => {
   gap: 1px;
   padding: 4px 8px;
   background: rgba(255, 255, 255, 0.03);
-  border-bottom: 1px solid var(--color-glass-border);
+  border-bottom: 1px solid var(--color-border);
   flex-wrap: nowrap;
   overflow-x: auto;
   flex-shrink: 0;
@@ -526,7 +524,7 @@ onBeforeUnmount(() => {
 }
 
 .toolbar-btn:hover {
-  background: var(--color-glass-hover);
+  background: var(--color-primary-tint);
   color: var(--color-text);
 }
 
@@ -549,7 +547,7 @@ onBeforeUnmount(() => {
 .toolbar-divider {
   width: 1px;
   height: 20px;
-  background: var(--color-glass-border);
+  background: var(--color-border);
   margin: 0 4px;
 }
 
@@ -656,11 +654,11 @@ onBeforeUnmount(() => {
   font-family: 'Fira Code', 'Consolas', monospace;
   font-size: 0.9em;
   overflow-x: auto;
-  border: 1px solid var(--color-glass-border);
+  border: 1px solid var(--color-border);
 }
 
 :deep(.tiptap code) {
-  background: rgba(108, 92, 231, 0.15);
+  background: var(--color-primary-tint);
   color: #a78bfa;
   padding: 0.15em 0.4em;
   border-radius: var(--radius-sm);
@@ -681,7 +679,7 @@ onBeforeUnmount(() => {
 
 :deep(.tiptap hr) {
   border: none;
-  border-top: 1px solid var(--color-glass-border);
+  border-top: 1px solid var(--color-border);
   margin: 1.5em 0;
 }
 

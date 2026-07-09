@@ -69,7 +69,7 @@ function onNoteSaved(id: string): void {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #6c5ce7 0%, #a855f7 100%);
+  background: var(--color-text);
   color: #fff;
   border: none;
   padding: 0.55rem 1.35rem;
@@ -80,12 +80,12 @@ function onNoteSaved(id: string): void {
   cursor: pointer;
   transition: transform var(--ease), box-shadow var(--ease);
   font-family: inherit;
-  box-shadow: 0 4px 16px rgba(108, 92, 231, 0.35);
+  box-shadow: var(--shadow-sm);
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 24px rgba(108, 92, 231, 0.45);
+  box-shadow: var(--shadow-md);
 }
 
 .btn-primary:active {

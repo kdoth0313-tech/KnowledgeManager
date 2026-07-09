@@ -3,14 +3,12 @@ import { ref } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 import { computed } from 'vue'
 import { useKnowledgeStore } from '@/stores/knowledge'
-import { useAuthStore } from '@/stores/auth'
 import { storeToRefs } from 'pinia'
 import { SUBJECTS } from '@/constants/subjects'
 
 const route = useRoute()
 const router = useRouter()
 const store = useKnowledgeStore()
-const authStore = useAuthStore()
 const { tagList, selectedTag, tagCounts, selectedSubject, subjectCounts } = storeToRefs(store)
 
 const sidebarOpen = ref(false)
@@ -116,12 +114,7 @@ function onNavClick(): void {
     </div>
 
     <div class="sidebar-footer">
-      <div class="sidebar-user">
-        <span class="user-avatar">🔒</span>
-        <div class="user-info">
-          <button class="btn-logout" @click="authStore.logout(); router.push({ name: 'auth' })">退出登录</button>
-        </div>
-      </div>
+      <span class="footer-text">Vue 3 + TypeScript</span>
     </div>
   </aside>
 </template>
@@ -136,10 +129,8 @@ function onNavClick(): void {
   z-index: 1100;
   width: 36px;
   height: 36px;
-  background: rgba(15, 15, 26, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--color-glass-border);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
   cursor: pointer;
   flex-direction: column;
@@ -179,15 +170,13 @@ function onNavClick(): void {
 .sidebar {
   width: 240px;
   height: 100vh;
-  background: rgba(15, 15, 26, 0.85);
-  backdrop-filter: blur(20px) saturate(1.2);
-  -webkit-backdrop-filter: blur(20px) saturate(1.2);
+  background: var(--color-surface-2);
   color: var(--color-text);
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
   user-select: none;
-  border-right: 1px solid var(--color-glass-border);
+  border-right: 1px solid var(--color-border);
 }
 
 .sidebar-brand {
@@ -195,12 +184,11 @@ function onNavClick(): void {
   align-items: center;
   gap: 0.6rem;
   padding: 1.35rem 1.15rem;
-  border-bottom: 1px solid var(--color-glass-border);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .brand-icon {
   font-size: 1.5rem;
-  filter: drop-shadow(0 2px 8px rgba(108, 92, 231, 0.5));
 }
 
 .brand-text {
@@ -208,61 +196,36 @@ function onNavClick(): void {
   font-weight: 700;
   color: var(--color-text);
   letter-spacing: 0.01em;
-  background: linear-gradient(135deg, var(--color-text), var(--color-accent));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
 }
 
 .sidebar-nav {
   padding: 0.85rem 0.65rem;
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
 }
 
 .nav-item {
   display: flex;
   align-items: center;
   gap: 0.65rem;
-  padding: 0.6rem 0.8rem;
+  padding: 0.5rem 0.8rem;
   color: var(--color-text-muted);
   text-decoration: none;
-  font-size: 0.92rem;
-  transition: all var(--ease);
-  border-radius: var(--radius-md);
-  position: relative;
-  overflow: hidden;
-}
-
-.nav-item::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, var(--color-primary-tint), transparent);
-  opacity: 0;
-  transition: opacity var(--ease);
+  font-size: 0.9rem;
+  transition: background 0.12s;
+  border-radius: var(--radius-sm);
 }
 
 .nav-item:hover {
-  background: var(--color-glass-hover);
+  background: var(--color-primary-tint);
   color: var(--color-text);
-  transform: translateX(2px);
-}
-
-.nav-item:hover::before {
-  opacity: 1;
 }
 
 .nav-item.active {
-  background: linear-gradient(135deg, #6c5ce7 0%, #a855f7 100%);
-  color: #fff;
+  background: var(--color-primary-tint);
+  color: var(--color-text);
   font-weight: 600;
-  box-shadow: 0 4px 20px rgba(108, 92, 231, 0.4);
-}
-
-.nav-item.active::before {
-  display: none;
 }
 
 .nav-icon {
@@ -273,7 +236,7 @@ function onNavClick(): void {
 
 /* Subject navigation section */
 .sidebar-subjects {
-  border-top: 1px solid var(--color-glass-border);
+  border-top: 1px solid var(--color-border);
   padding: 0.75rem 0;
 }
 
@@ -282,53 +245,48 @@ function onNavClick(): void {
   font-weight: 600;
   color: var(--color-text-faint);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
   padding: 0.4rem 1.25rem 0.5rem;
 }
 
 .subject-nav-list {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
   padding: 0 0.75rem;
 }
 
 .subject-nav-item {
-  --sc: #7f8c8d;
   display: flex;
   align-items: center;
   gap: 0.55rem;
   background: none;
   border: none;
   color: var(--color-text-muted);
-  padding: 0.4rem 0.55rem;
+  padding: 0.35rem 0.55rem;
   border-radius: var(--radius-sm);
   font-size: 0.85rem;
   cursor: pointer;
-  transition: all 0.15s;
+  transition: background 0.12s;
   width: 100%;
   text-align: left;
   font-family: inherit;
-  border-left: 3px solid transparent;
 }
 
 .subject-nav-item:hover {
-  background: var(--color-glass-hover);
+  background: var(--color-primary-tint);
   color: var(--color-text);
 }
 
 .subject-nav-item.active {
-  background: var(--color-glass-hover);
-  color: #fff;
+  background: var(--color-primary-tint);
+  color: var(--color-text);
   font-weight: 600;
-  border-left-color: var(--sc);
 }
 
 .subject-nav-icon {
   font-size: 1rem;
   line-height: 1;
-  width: 1.2rem;
-  text-align: center;
 }
 
 .subject-nav-name {
@@ -340,10 +298,7 @@ function onNavClick(): void {
 
 .subject-nav-count {
   font-size: 0.7rem;
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--color-text-muted);
-  padding: 0.05rem 0.4rem;
-  border-radius: var(--radius-pill);
+  color: var(--color-text-faint);
   flex-shrink: 0;
 }
 
@@ -353,7 +308,7 @@ function onNavClick(): void {
   display: flex;
   flex-direction: column;
   min-height: 0;
-  border-top: 1px solid var(--color-glass-border);
+  border-top: 1px solid var(--color-border);
   padding: 0.75rem 0;
 }.sidebar-tags-header {
   display: flex;
@@ -367,15 +322,12 @@ function onNavClick(): void {
   font-weight: 600;
   color: var(--color-text-faint);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
 }
 
 .sidebar-tags-count {
   font-size: 0.7rem;
-  color: var(--color-text-muted);
-  background: rgba(255, 255, 255, 0.08);
-  padding: 0.1rem 0.45rem;
-  border-radius: var(--radius-pill);
+  color: var(--color-text-faint);
 }
 
 .sidebar-tags-list {
@@ -384,7 +336,7 @@ function onNavClick(): void {
   padding: 0.25rem 0.75rem;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
 }
 
 .tag-pill {
@@ -394,30 +346,29 @@ function onNavClick(): void {
   background: none;
   border: none;
   color: var(--color-text-muted);
-  padding: 0.4rem 0.55rem;
+  padding: 0.35rem 0.55rem;
   border-radius: var(--radius-sm);
   font-size: 0.83rem;
   cursor: pointer;
-  transition: all 0.15s;
+  transition: background 0.12s;
   width: 100%;
   text-align: left;
   font-family: inherit;
 }
 
 .tag-pill:hover {
-  background: var(--color-glass-hover);
+  background: var(--color-primary-tint);
   color: var(--color-text);
 }
 
 .tag-pill.active {
-  background: linear-gradient(135deg, #6c5ce7 0%, #a855f7 100%);
-  color: #fff;
-  box-shadow: 0 2px 12px rgba(108, 92, 231, 0.35);
+  background: var(--color-primary-tint);
+  color: var(--color-text);
+  font-weight: 600;
 }
 
 .tag-pill.active .tag-pill-count {
-  background: rgba(255, 255, 255, 0.2);
-  color: #fff;
+  color: var(--color-text);
 }
 
 .tag-pill-name {
@@ -428,45 +379,19 @@ function onNavClick(): void {
 
 .tag-pill-count {
   font-size: 0.7rem;
-  background: rgba(255, 255, 255, 0.06);
   color: var(--color-text-faint);
-  padding: 0.05rem 0.4rem;
-  border-radius: var(--radius-pill);
   flex-shrink: 0;
   margin-left: 0.5rem;
 }
 
 .sidebar-footer {
   padding: 0.75rem 1rem;
-  border-top: 1px solid var(--color-glass-border);
+  border-top: 1px solid var(--color-border);
 }
 
-.sidebar-user {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.user-avatar {
-  font-size: 1.2rem;
-  line-height: 1;
-}
-
-.btn-logout {
-  background: none;
-  border: 1px solid var(--color-glass-border);
+.footer-text {
+  font-size: 0.75rem;
   color: var(--color-text-faint);
-  padding: 0.25rem 0.65rem;
-  border-radius: var(--radius-sm);
-  font-size: 0.78rem;
-  cursor: pointer;
-  font-family: inherit;
-  transition: all 0.15s;
-}
-
-.btn-logout:hover {
-  border-color: var(--color-danger);
-  color: var(--color-danger);
 }
 
 /* ── Responsive: Tablet & Mobile ── */

@@ -407,13 +407,11 @@ function handleExportPdf(): void {
 .related-card {
   display: block;
   padding: 0.6rem 0.7rem;
-  background: var(--color-glass);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: var(--color-surface);
   border-radius: var(--radius-sm);
   text-decoration: none;
   color: inherit;
-  border: 1px solid var(--color-glass-border);
+  border: 1px solid var(--color-border);
   transition: box-shadow 0.15s, border-color 0.15s;
 }
 
@@ -496,7 +494,7 @@ function handleExportPdf(): void {
 }
 
 .btn-save {
-  background: linear-gradient(135deg, #6c5ce7 0%, #a855f7 100%);
+  background: var(--color-text);
   color: #fff;
   border: none;
   padding: 0.45rem 1.35rem;
@@ -505,18 +503,18 @@ function handleExportPdf(): void {
   font-size: 0.9rem;
   font-weight: 600;
   transition: transform var(--ease), box-shadow var(--ease);
-  box-shadow: 0 4px 16px rgba(108, 92, 231, 0.35);
+  box-shadow: var(--shadow-sm);
 }
 
 .btn-save:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 24px rgba(108, 92, 231, 0.45);
+  box-shadow: var(--shadow-md);
 }
 
 .btn-float {
-  background: var(--color-glass);
+  background: var(--color-surface);
   color: var(--color-text-muted);
-  border: 1px solid var(--color-glass-border);
+  border: 1px solid var(--color-border);
   padding: 0.35rem 0.55rem;
   border-radius: var(--radius-sm);
   cursor: pointer;
@@ -536,9 +534,7 @@ function handleExportPdf(): void {
   position: fixed;
   inset: 0;
   z-index: 999;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.15);
   animation: fadeIn 0.15s ease;
 }
 
@@ -552,18 +548,16 @@ function handleExportPdf(): void {
   z-index: 1000;
   width: 80vw;
   height: 80vh;
-  background: rgba(20, 20, 35, 0.95);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--color-glass-border);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5), var(--shadow-glow);
+  box-shadow: var(--shadow-lg);
   padding: 1rem;
   gap: 0.75rem;
 }
 
 .editor-layout.floating .editor-main {
-  background: var(--color-glass);
+  background: var(--color-surface-2);
   border-radius: var(--radius-md);
   padding: 1rem;
   box-shadow: none;
@@ -590,9 +584,9 @@ function handleExportPdf(): void {
 }
 
 .btn-export {
-  background: var(--color-glass);
+  background: var(--color-surface);
   color: var(--color-text-muted);
-  border: 1px solid var(--color-glass-border);
+  border: 1px solid var(--color-border);
   padding: 0.35rem 0.6rem;
   border-radius: var(--radius-sm);
   cursor: pointer;
@@ -630,7 +624,7 @@ function handleExportPdf(): void {
 }
 
 :deep(.subject-error) .subject-chip:not(.active) {
-  border-color: rgba(255, 118, 117, 0.4);
+  border-color: #fde8e8;
   animation: shake 0.4s ease;
 }
 
@@ -656,10 +650,10 @@ function handleExportPdf(): void {
   width: 100%;
   padding: 0.45rem 0.65rem;
   font-size: 0.88rem;
-  border: 1px solid var(--color-glass-border);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
   outline: none;
-  background: var(--color-glass);
+  background: var(--color-surface);
   color: var(--color-text);
   resize: none;
   font-family: inherit;
@@ -681,9 +675,9 @@ function handleExportPdf(): void {
   gap: 0.3rem;
   flex-wrap: wrap;
   padding: 0.35rem 0.55rem;
-  border: 1px solid var(--color-glass-border);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
-  background: var(--color-glass);
+  background: var(--color-surface);
   min-height: 2.2rem;
   transition: border-color 0.15s;
 }
@@ -693,7 +687,7 @@ function handleExportPdf(): void {
 }
 
 .chip {
-  background: rgba(108, 92, 231, 0.15);
+  background: var(--color-primary-tint);
   color: #a78bfa;
   padding: 0.1rem 0.45rem;
   border-radius: var(--radius-sm);
@@ -749,7 +743,7 @@ function handleExportPdf(): void {
 }
 
 .tag-chip {
-  background: rgba(108, 92, 231, 0.15);
+  background: var(--color-primary-tint);
   color: #a78bfa;
   padding: 0.15rem 0.5rem;
   border-radius: var(--radius-sm);
@@ -775,7 +769,7 @@ function handleExportPdf(): void {
 
 .tag-expand-btn {
   background: none;
-  border: 1px dashed var(--color-glass-border);
+  border: 1px dashed var(--color-border);
   color: var(--color-primary);
   padding: 0.15rem 0.5rem;
   border-radius: var(--radius-sm);
@@ -790,7 +784,7 @@ function handleExportPdf(): void {
 }
 
 .tag-input {
-  border: 1px dashed var(--color-glass-border);
+  border: 1px dashed var(--color-border);
   outline: none;
   padding: 0.15rem 0.5rem;
   border-radius: var(--radius-sm);
